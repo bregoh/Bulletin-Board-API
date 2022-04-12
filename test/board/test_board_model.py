@@ -1,4 +1,5 @@
 import pytest
+
 from bulletin.models.board_model import Board
 
 DATA = {"board_name": "board54"}

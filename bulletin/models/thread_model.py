@@ -1,7 +1,10 @@
 import uuid
+
 from django.db import models
 from django.utils import timezone
+
 from bulletin.models.board_model import Board
+from users.models import User
 
 
 class Thread(models.Model):

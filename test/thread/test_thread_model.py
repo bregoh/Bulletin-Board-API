@@ -1,4 +1,5 @@
 import pytest
+
 from bulletin.models.board_model import Board
 from bulletin.models.thread_model import Thread
 

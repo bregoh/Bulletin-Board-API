@@ -1,15 +1,23 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.response import Response
 from rest_framework import status
-from bulletin.serializers import ThreadSerializer
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+    CreateAPIView,
+)
+from rest_framework.response import Response
+
 from bulletin.models.thread_model import Thread
-from static.customResponse import CustomResponse
+from bulletin.serializers import ThreadSerializer
 from static.constants import Constant
+from static.customResponse import CustomResponse
+
+from users.models import User
+from django.contrib.auth.models import Group, Permission
 
 
 class ListCreateThreads(ListCreateAPIView):
     def post(self, request, *args, **kwargs):
-        thread = ThreadSerializer(data=request.data)
+        thread = ThreadSerializer(data=request.data, context={"request": request})
         if thread.is_valid():
             thread.save()
             response_data = CustomResponse.response(
@@ -73,3 +81,35 @@ class RetrieveUpdateDestroyThreads(RetrieveUpdateDestroyAPIView):
             message=Constant.THREAD_DELETED, error={}
         )
         return Response(data=response_data, status=status.HTTP_204_NO_CONTENT)
+
+
+"""
+View Class to Add New Thread Moderator
+
+"""
+
+
+class AddThreadModeratorView(CreateAPIView):
+    def post(self, request, *args, **kwargs):
+        response = kwargs["status"]
+
+        if response == "declined":
+            response_data = CustomResponse.response(
+                message=Constant.THREAD_MODERATOR_DECLINED
+            )
+            return Response(data=response_data, status=status.HTTP_304_NOT_MODIFIED)
+
+        group, created = Group.objects.get_or_create(name="thread_moderator")
+        permissions = Permission.objects.get(
+            name__in=["Can add thread", "Can change thread"]
+        )
+        user_id = request.user.user_id
+        user = User.objects.get(user_id=user_id)
+
+        for permission in permissions:
+            group.user_set.add(user)
+            group.permissions.add(permission)
+            user.user_permissions.add(permission)
+
+        response_data = CustomResponse.response(message=Constant.THREAD_MODERATOR_ADDED)
+        return Response(data=response_data, status=status.HTTP_200_OK)

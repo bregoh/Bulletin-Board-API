@@ -18,3 +18,14 @@ class Constant:
     THREAD_NOT_UPDATED = "thread not updated"
     THREAD_DELETED = "thread deleted successfully"
     THREAD_NOT_FOUND = "thread not found"
+
+    # user
+    USER_CREATED = "user created successfully"
+    USER_NOT_CREATED = "user not created"
+    USER_LOGGED_IN = "user logged in successfully"
+    INVALID_AUTH_CREDENTIALS = "invalid username and password"
+    UNAUTHORIZED_ACTION = "you do not have permission for this action"
+    BOARD_MODERATOR_ADDED = "you are now a board moderator"
+    BOARD_MODERATOR_DECLINED = "you are not a board moderator"
+    THREAD_MODERATOR_ADDED = "you are now a thread moderator"
+    THREAD_MODERATOR_DECLINED = "you are not a thread moderator"
